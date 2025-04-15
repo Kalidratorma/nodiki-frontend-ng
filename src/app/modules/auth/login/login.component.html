@@ -1,0 +1,39 @@
+<div class="auth-container">
+  <h2 class="auth-title">Login</h2>
+
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="auth-form">
+    <label for="username">Username</label>
+    <input
+      id="username"
+      formControlName="username"
+      type="text"
+      placeholder="Enter your username"
+    />
+    <div *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched" class="text-red-600 text-sm">
+      Username is required.
+    </div>
+
+    <label for="password">Password</label>
+    <input
+      id="password"
+      formControlName="password"
+      type="password"
+      placeholder="Enter your password"
+    />
+    <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="text-red-600 text-sm">
+      Password is required.
+    </div>
+
+    <button type="submit" [disabled]="loginForm.invalid">Login</button>
+
+    <div *ngIf="loginSuccess" class="text-green-600 text-center mt-4">Login successful!</div>
+    <div *ngIf="loginError" class="text-red-600 text-center mt-4">Invalid credentials. Please try again.</div>
+  </form>
+
+  <p class="mt-4 text-center">
+    Don't have an account?
+    <a routerLink="/auth/register" class="text-blue-600 hover:underline">
+      Register
+    </a>
+  </p>
+</div>
