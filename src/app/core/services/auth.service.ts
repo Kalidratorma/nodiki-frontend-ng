@@ -21,7 +21,7 @@ export class AuthService {
    * @returns An observable with server response
    */
   register(data: RegisterRequest): Observable<any> {
-    return this.http.post(`${this.apiUrl}/auth/signup`, data);
+    return this.http.post(`${this.apiUrl}/auth/signup`, data, { withCredentials: true });
   }
 
   /**
@@ -30,6 +30,6 @@ export class AuthService {
    * @returns An observable with JWT response
    */
   login(data: LoginRequest): Observable<JwtResponse> {
-    return this.http.post<JwtResponse>(`${this.apiUrl}/auth/signin`, data);
+    return this.http.post<JwtResponse>(`${this.apiUrl}/auth/signin`, data, { withCredentials: true });
   }
 }
