@@ -1,19 +1,14 @@
-import { bootstrapApplication } from '@angular/platform-browser';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { AppComponent } from './app/app.component';
-import { provideRouter } from '@angular/router';
-import { routes } from './app/app.routes';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { AuthInterceptor } from './app/core/interceptors/auth.interceptor';
+/**
+ * Angular application bootstrap file.
+ * Uses standalone AppComponent and centralized app configuration.
+ */
 
-bootstrapApplication(AppComponent, {
-  providers: [
-    provideHttpClient(withInterceptorsFromDi()),
-    provideRouter(routes),
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AuthInterceptor,
-      multi: true
-    }
-  ]
-}).catch(err => console.error(err));
+import { bootstrapApplication } from '@angular/platform-browser';
+import { AppComponent } from './app/app.component';
+import { appConfig } from './app/app.config';
+
+/**
+ * Bootstraps the standalone application using the global configuration.
+ */
+bootstrapApplication(AppComponent, appConfig)
+  .catch(err => console.error(err));

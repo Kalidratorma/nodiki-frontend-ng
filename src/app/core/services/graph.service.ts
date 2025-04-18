@@ -1,29 +1,34 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Node, Edge } from '@swimlane/ngx-graph';
-import { Observable, forkJoin, map } from 'rxjs';
-import { environment } from '../../environments/environment';
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {Observable, map} from 'rxjs';
+import {Node, Edge} from '@swimlane/ngx-graph';
+import {environment} from '../../environments/environment';
 
 /**
- * Service for fetching and transforming graph data (nodes and edges).
+ * Service for managing graph data via the backend API.
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class GraphService {
-  private apiUrl = environment.apiBaseUrl;
+  private readonly nodesUrl = `${environment.apiBaseUrl}/nodes`;
+  private readonly edgesUrl = `${environment.apiBaseUrl}/edges`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+  }
 
   /**
-   * Fetches nodes from the backend and transforms them for ngx-graph.
+   * Loads all graph nodes from backend and maps to ngx-graph format.
+   * Ensures each node has a DOM-safe ID and valid label.
    */
   getNodes(): Observable<Node[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/nodes`).pipe(
+    return this.http.get<any[]>(this.nodesUrl).pipe(
       map(nodes =>
         nodes.map(node => ({
-          id: node.id.toString(),
-          label: node.label,
+          id: `node-${node.id}`,
+          label: node.label && node.label.trim().length > 0
+            ? node.label
+            : `Node ${node.id}`,
           data: {
             x: node.x,
             y: node.y
@@ -34,28 +39,58 @@ export class GraphService {
   }
 
   /**
-   * Fetches edges from the backend and transforms them for ngx-graph.
+   * Loads all graph edges from backend and maps to ngx-graph format.
+   * Ensures IDs are prefixed and label is safe.
    */
   getEdges(): Observable<Edge[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/edges`).pipe(
+    return this.http.get<any[]>(this.edgesUrl).pipe(
       map(edges =>
         edges.map(edge => ({
-          id: edge.id.toString(),
-          source: edge.source.toString(),
-          target: edge.target.toString(),
-          label: edge.label
+          id: `edge-${edge.id}`,
+          source: `node-${edge.sourceId}`,
+          target: `node-${edge.targetId}`,
+          label: edge.label && edge.label.trim().length > 0
+            ? edge.label
+            : '–'
         }))
       )
     );
   }
 
   /**
-   * Fetches both nodes and edges as a combined observable.
+   * Sends request to create a new node.
+   * @param label Display label for the node.
    */
-  getGraph(): Observable<{ nodes: Node[]; edges: Edge[] }> {
-    return forkJoin({
-      nodes: this.getNodes(),
-      edges: this.getEdges()
+  addNode(label: string): Observable<Node> {
+    const body = {
+      label,
+      x: Math.random() * 500,
+      y: Math.random() * 300,
+    };
+    return this.http.post<any>(this.nodesUrl, body).pipe(
+      map(node => ({
+        id: `node-${node.id}`,
+        label: node.label && node.label.trim().length > 0
+          ? node.label
+          : `Node ${node.id}`,
+        data: {
+          x: node.x,
+          y: node.y
+        }
+      }))
+    );
+  }
+
+  /**
+   * Sends request to create an edge between two nodes.
+   * @param sourceId Source node ID (unprefixed)
+   * @param targetId Target node ID (unprefixed)
+   */
+  createEdge(sourceId: string, targetId: string): Observable<void> {
+    // Backend expects raw numeric IDs
+    return this.http.post<void>(this.edgesUrl, {
+      sourceId: sourceId.replace('node-', ''),
+      targetId: targetId.replace('node-', '')
     });
   }
 }

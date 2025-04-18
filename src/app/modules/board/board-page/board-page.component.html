@@ -1,12 +1,34 @@
-<div class="p-6">
-  <h1 class="text-xl font-bold mb-4">Board</h1>
+<div class="p-4">
+  <button (click)="addNode()" class="btn btn-primary mb-4">
+    ➕ Add Node
+  </button>
 
+  <!-- Render graph when there is at least one node -->
   <ngx-graph
-    [nodes]="nodes"
+    *ngIf="nodes.length > 0"
+    class="chart-container"
+    [view]="[800, 600]"
     [links]="links"
-    [layout]="'dagre'"
+    [nodes]="nodes"
+    [curve]="curve"
+    [enableZoom]="true"
+    [draggingEnabled]="true"
+    [zoomSpeed]="0.1"
     [panOnZoom]="true"
-    [autoZoom]="true"
-    class="h-[600px] border rounded"
-  ></ngx-graph>
+    [autoZoom]="true">
+
+    <!-- Custom node template -->
+    <ng-template #nodeTemplate let-node>
+      <svg:g (click)="onNodeClick(node.id)">
+        <svg:circle r="20" [attr.fill]="getNodeColor(node.id)" />
+        <svg:text
+          alignment-baseline="middle"
+          text-anchor="middle"
+          fill="white"
+          font-size="12">
+          {{ node.label }}
+        </svg:text>
+      </svg:g>
+    </ng-template>
+  </ngx-graph>
 </div>
