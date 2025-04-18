@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Node } from '../models/Node';
 import { Edge } from '../models/Edge';
 import { User } from '../models/User';
+import {environment} from '../../environments/environment';
 
 /**
  * Service for interacting with backend API.
@@ -12,7 +13,7 @@ import { User } from '../models/User';
   providedIn: 'root',
 })
 export class ApiService {
-  private baseUrl = 'http://localhost:8080/api';
+  private baseUrl = environment.apiBaseUrl;
 
   constructor(private http: HttpClient) {}
 

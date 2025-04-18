@@ -1,11 +1,23 @@
+/**
+ * Global Angular application configuration.
+ * Includes router, HTTP client with interceptors, and optimized zone settings.
+ */
+
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 import { routes } from './app.routes';
-import {provideHttpClient} from '@angular/common/http';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideHttpClient(),
-    provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes)]
+    // Enables HTTP client and registers interceptors from DI
+    provideHttpClient(withInterceptorsFromDi()),
+
+    // Enables router with defined application routes
+    provideRouter(routes),
+
+    // Optimizes change detection performance
+    provideZoneChangeDetection({ eventCoalescing: true })
+  ]
 };

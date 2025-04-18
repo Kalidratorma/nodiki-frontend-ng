@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import { NgxGraphModule } from '@swimlane/ngx-graph';
 import { CommonModule } from '@angular/common';
 import { Node, Edge } from '@swimlane/ngx-graph';
+import { GraphService } from '../../../core/services/graph.service';
 
 /**
  * Main board page with graph visualization.
@@ -13,7 +14,7 @@ import { Node, Edge } from '@swimlane/ngx-graph';
   templateUrl: './board-page.component.html',
   styleUrls: ['./board-page.component.scss']
 })
-export class BoardPageComponent {
+export class BoardPageComponent implements OnInit {
   /**
    * List of graph nodes.
    */
@@ -49,4 +50,14 @@ export class BoardPageComponent {
       label: 'Link B'
     }
   ];
+
+
+  constructor(private graphService: GraphService) {}
+
+  ngOnInit(): void {
+    this.graphService.getGraph().subscribe(({ nodes, edges }) => {
+      this.nodes = nodes;
+      this.links = edges;
+    });
+  }
 }
