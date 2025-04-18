@@ -2,39 +2,42 @@ import {Component, OnInit} from '@angular/core';
 import {Node, Edge, GraphModule} from '@swimlane/ngx-graph';
 import {GraphService} from '../../../core/services/graph.service';
 import {curveLinear} from 'd3-shape';
-import { NgIf } from '@angular/common';
+import {NgIf} from '@angular/common';
 
 /**
- * BoardPageComponent visualizes and manages the node graph.
- * Supports adding nodes and creating edges interactively.
+ * Visualizes and manages the interactive graph board.
+ * Supports node creation, edge creation, and highlighting.
  */
 @Component({
   selector: 'app-board-page',
   templateUrl: './board-page.component.html',
   styleUrls: ['./board-page.component.scss'],
-  imports: [
-    GraphModule, NgIf
-  ],
-  standalone: true
+  standalone: true,
+  imports: [NgIf, GraphModule],
 })
 export class BoardPageComponent implements OnInit {
   nodes: Node[] = [];
   links: Edge[] = [];
-  selectedNodeId: string | null = null;
   curve = curveLinear;
+
+  /** Whether user is in edge creation mode */
+  isCreatingEdge = false;
+
+  /** ID of the first selected node (if any) */
+  selectedNodeId: string | null = null;
 
   constructor(private graphService: GraphService) {
   }
 
   /**
-   * Loads graph data on initialization.
+   * Initializes the graph by loading nodes and edges.
    */
   ngOnInit(): void {
     this.loadGraph();
   }
 
   /**
-   * Loads nodes and edges from the backend API.
+   * Fetches current graph data.
    */
   loadGraph(): void {
     this.graphService.getNodes().subscribe(nodes => (this.nodes = nodes));
@@ -42,7 +45,7 @@ export class BoardPageComponent implements OnInit {
   }
 
   /**
-   * Adds a new node and reloads the graph.
+   * Adds a new node with default label and random position.
    */
   addNode(): void {
     const label = `Node ${this.nodes.length + 1}`;
@@ -50,10 +53,12 @@ export class BoardPageComponent implements OnInit {
   }
 
   /**
-   * Handles click on a node to create edge between two selected nodes.
-   * @param nodeId ID of the clicked node.
+   * Handles node click event based on interaction mode.
+   * @param nodeId ID of the clicked node
    */
   onNodeClick(nodeId: string): void {
+    if (!this.isCreatingEdge) return;
+
     if (!this.selectedNodeId) {
       this.selectedNodeId = nodeId;
     } else if (this.selectedNodeId !== nodeId) {
@@ -69,7 +74,15 @@ export class BoardPageComponent implements OnInit {
   }
 
   /**
-   * Returns node fill color depending on selection.
+   * Toggles the edge creation mode on/off.
+   */
+  toggleEdgeMode(): void {
+    this.isCreatingEdge = !this.isCreatingEdge;
+    this.selectedNodeId = null;
+  }
+
+  /**
+   * Determines node fill color depending on selection.
    * @param id Node ID
    */
   getNodeColor(id: string): string {

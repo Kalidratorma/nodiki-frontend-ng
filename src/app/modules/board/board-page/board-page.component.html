@@ -1,9 +1,20 @@
-<div class="p-4">
-  <button (click)="addNode()" class="btn btn-primary mb-4">
+<div class="p-4 space-y-4">
+
+  <!-- Add node button -->
+  <button (click)="addNode()" class="btn btn-primary">
     ➕ Add Node
   </button>
 
-  <!-- Render graph when there is at least one node -->
+  <!-- Toggle edge mode button -->
+  <button
+    (click)="toggleEdgeMode()"
+    class="btn"
+    [class.btn-success]="isCreatingEdge"
+    [class.btn-outline-secondary]="!isCreatingEdge">
+    {{ isCreatingEdge ? 'Creating Edge...' : '🧷 Create Edge' }}
+  </button>
+
+  <!-- Graph visualization -->
   <ngx-graph
     *ngIf="nodes.length > 0"
     class="chart-container"
@@ -14,13 +25,12 @@
     [enableZoom]="true"
     [draggingEnabled]="true"
     [zoomSpeed]="0.1"
-    [panOnZoom]="true"
-    [autoZoom]="true">
+    [panOnZoom]="true">
 
-    <!-- Custom node template -->
+    <!-- Node template -->
     <ng-template #nodeTemplate let-node>
       <svg:g (click)="onNodeClick(node.id)">
-        <svg:circle r="20" [attr.fill]="getNodeColor(node.id)" />
+        <svg:circle r="20" [attr.fill]="getNodeColor(node.id)"/>
         <svg:text
           alignment-baseline="middle"
           text-anchor="middle"
