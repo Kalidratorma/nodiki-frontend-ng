@@ -1,10 +1,11 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" fill="black">
-  <!-- Центральная сота (правильный шестиугольник) -->
-  <polygon points="38.93,28.00 38.93,36.00 32.00,40.00 25.07,36.00 25.07,28.00 32.00,24.00" fill="none" stroke="black" stroke-width="2"/>
+<?xml version="1.0" encoding="utf-8"?>
+<svg fill="black" height="64" viewBox="0 0 64 64" width="64" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="32.0" cy="32.0" fill="white" r="32.0"/>
+  <!-- Central cell (regular hexagon) -->
+  <polygon fill="none" points="38.93,28.00 38.93,36.00 32.00,40.00 25.07,36.00 25.07,28.00 32.00,24.00" stroke="black"
+           stroke-width="2"/>
   <circle cx="32" cy="32" r="2.5"/>
-
-  <!-- Шесть внешних точек по кругу -->
+  <!-- Six outer points arranged in a circle -->
   <circle cx="32" cy="12" r="3"/>
   <circle cx="32" cy="52" r="3"/>
   <circle cx="12" cy="32" r="3"/>
