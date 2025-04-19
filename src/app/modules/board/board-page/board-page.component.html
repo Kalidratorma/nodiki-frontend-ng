@@ -7,18 +7,25 @@
 <div class="graph-controls">
   <button class="btn btn-primary" (click)="addNode()">➕ Add Node</button>
   <button
-    class="btn btn-danger"
-    (click)="deleteSelectedNode()"
-    [disabled]="!selectedNodeId"
-  >
-    🗑️ Delete Node
-  </button>
-  <button
     class="btn btn-secondary"
     (click)="toggleEdgeMode()"
     [class.active]="isCreatingEdge"
   >
     🔗 {{ isCreatingEdge ? 'Cancel Linking' : 'Create Edge' }}
+  </button>
+  <button
+    class="btn btn-warning"
+    (click)="renameSelectedNode()"
+    [disabled]="!selectedNodeId"
+  >
+    ✏️ Rename Node
+  </button>
+  <button
+    class="btn btn-danger"
+    (click)="deleteSelectedNode()"
+    [disabled]="!selectedNodeId"
+  >
+    🗑️ Delete Node
   </button>
 </div>
 

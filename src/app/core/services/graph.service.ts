@@ -102,4 +102,16 @@ export class GraphService {
   deleteNode(id: string): Observable<void> {
     return this.http.delete<void>(`${this.nodesUrl}/${id.replace('node-', '')}`);
   }
+
+  /**
+   * Renames a node with the given ID.
+   * @param id - The ID of the node to rename
+   * @param label - The new label for the node
+   * @returns Observable of void
+   */
+  renameNode(id: string, label: string): Observable<void> {
+    const numericId = id.replace('node-', '');
+    return this.http.put<void>(`${this.nodesUrl}/${numericId}`, { label });
+  }
+
 }

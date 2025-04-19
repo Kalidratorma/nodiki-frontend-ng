@@ -92,6 +92,23 @@ export class BoardPageComponent implements OnInit {
   }
 
   /**
+   * Renames the selected node using a prompt dialog.
+   * Updates the label on the backend and refreshes the graph.
+   */
+  renameSelectedNode(): void {
+    if (!this.selectedNodeId) return;
+
+    const currentLabel = this.nodes.find(n => n.id === this.selectedNodeId)?.label || '';
+    const newLabel = prompt('Enter new label for the node:', currentLabel);
+
+    if (newLabel && newLabel.trim() !== currentLabel) {
+      this.graphService.renameNode(this.selectedNodeId, newLabel.trim()).subscribe(() => {
+        this.loadGraph();
+      });
+    }
+  }
+
+  /**
    * Handles selection of nodes or edges.
    * Currently only nodes are processed.
    */
