@@ -93,4 +93,13 @@ export class GraphService {
       targetId: targetId.replace('node-', '')
     });
   }
+
+  /**
+   * Deletes a node by ID.
+   * Automatically removes related edges on the backend side.
+   * @param id Full node ID like 'node-3'
+   */
+  deleteNode(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.nodesUrl}/${id.replace('node-', '')}`);
+  }
 }

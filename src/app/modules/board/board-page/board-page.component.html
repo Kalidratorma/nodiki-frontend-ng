@@ -1,44 +1,35 @@
-<div class="p-4 space-y-4">
+<!--
+  Graph board template.
+  Renders controls and the graph using ngx-graph.
+  Graph only shown when graphReady is true.
+-->
 
-  <!-- Add node button -->
-  <button (click)="addNode()" class="btn btn-primary">
-    ➕ Add Node
-  </button>
-
-  <!-- Toggle edge mode button -->
+<div class="graph-controls">
+  <button class="btn btn-primary" (click)="addNode()">➕ Add Node</button>
   <button
-    (click)="toggleEdgeMode()"
-    class="btn"
-    [class.btn-success]="isCreatingEdge"
-    [class.btn-outline-secondary]="!isCreatingEdge">
-    {{ isCreatingEdge ? 'Creating Edge...' : '🧷 Create Edge' }}
+    class="btn btn-danger"
+    (click)="deleteSelectedNode()"
+    [disabled]="!selectedNodeId"
+  >
+    🗑️ Delete Node
   </button>
-
-  <!-- Graph visualization -->
-  <ngx-graph
-    *ngIf="nodes.length > 0"
-    class="chart-container"
-    [view]="[800, 600]"
-    [links]="links"
-    [nodes]="nodes"
-    [curve]="curve"
-    [enableZoom]="true"
-    [draggingEnabled]="true"
-    [zoomSpeed]="0.1"
-    [panOnZoom]="true">
-
-    <!-- Node template -->
-    <ng-template #nodeTemplate let-node>
-      <svg:g (click)="onNodeClick(node.id)">
-        <svg:circle r="20" [attr.fill]="getNodeColor(node.id)"/>
-        <svg:text
-          alignment-baseline="middle"
-          text-anchor="middle"
-          fill="white"
-          font-size="12">
-          {{ node.label }}
-        </svg:text>
-      </svg:g>
-    </ng-template>
-  </ngx-graph>
+  <button
+    class="btn btn-secondary"
+    (click)="toggleEdgeMode()"
+    [class.active]="isCreatingEdge"
+  >
+    🔗 {{ isCreatingEdge ? 'Cancel Linking' : 'Create Edge' }}
+  </button>
 </div>
+
+<!-- Graph rendered only when ready -->
+<ng-container *ngIf="graphReady">
+  <ngx-graph
+    class="chart-container"
+    [nodes]="nodes"
+    [links]="links"
+    [layout]="'dagre'"
+    [curve]="curve"
+    (select)="onElementSelect($event)">
+  </ngx-graph>
+</ng-container>

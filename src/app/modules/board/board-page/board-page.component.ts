@@ -5,8 +5,8 @@ import {curveLinear} from 'd3-shape';
 import {NgIf} from '@angular/common';
 
 /**
- * Visualizes and manages the interactive graph board.
- * Supports node creation, edge creation, and highlighting.
+ * Component responsible for rendering and managing the graph board.
+ * Includes functionality for adding, deleting, selecting and linking nodes.
  */
 @Component({
   selector: 'app-board-page',
@@ -16,36 +16,64 @@ import {NgIf} from '@angular/common';
   imports: [NgIf, GraphModule],
 })
 export class BoardPageComponent implements OnInit {
+  /** Graph nodes */
   nodes: Node[] = [];
-  links: Edge[] = [];
-  curve = curveLinear;
 
-  /** Whether user is in edge creation mode */
+  /** Graph links */
+  links: Edge[] = [];
+
+  /** Selected node ID */
+  selectedNodeId: string | null = null;
+
+  /** Edge creation mode flag */
   isCreatingEdge = false;
 
-  /** ID of the first selected node (if any) */
-  selectedNodeId: string | null = null;
+  /** Graph rendering readiness flag */
+  graphReady = false;
+
+  /** D3 curve function used for rendering edges */
+  curve = curveLinear;
 
   constructor(private graphService: GraphService) {
   }
 
   /**
-   * Initializes the graph by loading nodes and edges.
+   * Initializes the component by loading the graph.
    */
   ngOnInit(): void {
     this.loadGraph();
   }
 
   /**
-   * Fetches current graph data.
+   * Loads nodes and edges from the backend and filters invalid links.
+   * Sets the `graphReady` flag when both are available.
    */
   loadGraph(): void {
-    this.graphService.getNodes().subscribe(nodes => (this.nodes = nodes));
-    this.graphService.getEdges().subscribe(links => (this.links = links));
+    this.graphReady = false;
+
+    this.graphService.getNodes().subscribe((nodes) => {
+      this.nodes = nodes;
+
+      this.graphService.getEdges().subscribe((links) => {
+        this.links = links;
+        this.filterValidLinks();
+        this.graphReady = true;
+      });
+    });
   }
 
   /**
-   * Adds a new node with default label and random position.
+   * Filters out links that point to non-existent nodes.
+   */
+  filterValidLinks(): void {
+    const nodeIds = new Set(this.nodes.map((n) => n.id));
+    this.links = this.links.filter(
+      (link) => nodeIds.has(link.source) && nodeIds.has(link.target)
+    );
+  }
+
+  /**
+   * Adds a new node with default label.
    */
   addNode(): void {
     const label = `Node ${this.nodes.length + 1}`;
@@ -53,28 +81,50 @@ export class BoardPageComponent implements OnInit {
   }
 
   /**
-   * Handles node click event based on interaction mode.
-   * @param nodeId ID of the clicked node
+   * Deletes the currently selected node.
    */
-  onNodeClick(nodeId: string): void {
-    if (!this.isCreatingEdge) return;
-
-    if (!this.selectedNodeId) {
-      this.selectedNodeId = nodeId;
-    } else if (this.selectedNodeId !== nodeId) {
-      const source = this.selectedNodeId;
-      const target = nodeId;
-      this.graphService.createEdge(source, target).subscribe(() => {
-        this.loadGraph();
-        this.selectedNodeId = null;
-      });
-    } else {
+  deleteSelectedNode(): void {
+    if (!this.selectedNodeId) return;
+    this.graphService.deleteNode(this.selectedNodeId).subscribe(() => {
       this.selectedNodeId = null;
+      this.loadGraph();
+    });
+  }
+
+  /**
+   * Handles selection of nodes or edges.
+   * Currently only nodes are processed.
+   */
+  onElementSelect(event: any): void {
+    if (event && 'id' in event) {
+      this.onNodeClick(event.id);
     }
   }
 
   /**
-   * Toggles the edge creation mode on/off.
+   * Handles logic depending on edge creation mode or selection.
+   */
+  onNodeClick(nodeId: string): void {
+    if (this.isCreatingEdge) {
+      if (!this.selectedNodeId) {
+        this.selectedNodeId = nodeId;
+      } else if (this.selectedNodeId !== nodeId) {
+        const source = this.selectedNodeId;
+        const target = nodeId;
+        this.graphService.createEdge(source, target).subscribe(() => {
+          this.loadGraph();
+          this.selectedNodeId = null;
+        });
+      } else {
+        this.selectedNodeId = null;
+      }
+    } else {
+      this.selectedNodeId = nodeId;
+    }
+  }
+
+  /**
+   * Toggles the edge creation mode on or off.
    */
   toggleEdgeMode(): void {
     this.isCreatingEdge = !this.isCreatingEdge;
