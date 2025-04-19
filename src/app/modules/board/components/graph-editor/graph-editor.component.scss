@@ -1,0 +1,44 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* SVG canvas background */
+svg {
+  width: 100%;
+  height: 100vh;
+  background-color: #f8f9fa;
+  user-select: none;
+  cursor: default;
+}
+
+/* Edges */
+line {
+  stroke: #90caf9;
+  stroke-width: 2px;
+}
+
+/* Nodes */
+.node-rect {
+  transition: fill 0.2s ease;
+  rx: 8;
+  ry: 8;
+  stroke: #1976d2;
+  stroke-width: 2;
+  fill: #fff;
+}
+
+.node-rect:hover {
+  fill: #e3f2fd;
+}
+
+.node-label {
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  fill: #000;
+  text-anchor: middle;
+  alignment-baseline: middle;
+  pointer-events: none;
+}

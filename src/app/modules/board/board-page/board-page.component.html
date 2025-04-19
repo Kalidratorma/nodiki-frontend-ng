@@ -1,42 +1,5 @@
-<!--
-  Graph board template.
-  Renders controls and the graph using ngx-graph.
-  Graph only shown when graphReady is true.
--->
-
-<div class="graph-controls">
-  <button class="btn btn-primary" (click)="addNode()">➕ Add Node</button>
-  <button
-    class="btn btn-secondary"
-    (click)="toggleEdgeMode()"
-    [class.active]="isCreatingEdge"
-  >
-    🔗 {{ isCreatingEdge ? 'Cancel Linking' : 'Create Edge' }}
-  </button>
-  <button
-    class="btn btn-warning"
-    (click)="renameSelectedNode()"
-    [disabled]="!selectedNodeId"
-  >
-    ✏️ Rename Node
-  </button>
-  <button
-    class="btn btn-danger"
-    (click)="deleteSelectedNode()"
-    [disabled]="!selectedNodeId"
-  >
-    🗑️ Delete Node
-  </button>
+<!-- Board Page Template -->
+<div class="board-container">
+  <!-- Graph Editor embedded in the board page -->
+  <app-graph-editor></app-graph-editor>
 </div>
-
-<!-- Graph rendered only when ready -->
-<ng-container *ngIf="graphReady">
-  <ngx-graph
-    class="chart-container"
-    [nodes]="nodes"
-    [links]="links"
-    [layout]="'dagre'"
-    [curve]="curve"
-    (select)="onElementSelect($event)">
-  </ngx-graph>
-</ng-container>

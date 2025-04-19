@@ -1,0 +1,29 @@
+<svg #svgRoot
+     (mousemove)="onMouseMove($event)"
+     (mouseup)="onMouseUp()"
+     width="100%" height="100%" style="background: #f8f9fa;">
+
+  <!-- Edges -->
+  <line *ngFor="let edge of edges"
+        [attr.x1]="getNode(edge.sourceId)?.x"
+        [attr.y1]="getNode(edge.sourceId)?.y"
+        [attr.x2]="getNode(edge.targetId)?.x"
+        [attr.y2]="getNode(edge.targetId)?.y"
+        stroke="#90caf9" stroke-width="2" />
+
+  <!-- Nodes -->
+  <g *ngFor="let node of nodes"
+     [attr.transform]="'translate(' + node.x + ',' + node.y + ')'"
+     (mousedown)="onNodeMouseDown($event, node)"
+     cursor="move">
+
+    <rect x="-60" y="-25" width="120" height="50" rx="8" ry="8"
+          fill="#fff" stroke="#1976d2" stroke-width="2" class="node-rect" />
+
+    <text x="0" y="0" font-size="14" text-anchor="middle"
+          alignment-baseline="middle" fill="#000" class="node-label">
+      {{ node.label }}
+    </text>
+  </g>
+
+</svg>

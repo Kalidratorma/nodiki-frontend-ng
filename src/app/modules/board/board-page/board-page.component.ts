@@ -1,8 +1,10 @@
 import {Component, OnInit} from '@angular/core';
-import {Node, Edge, GraphModule} from '@swimlane/ngx-graph';
-import {GraphService} from '../../../core/services/graph.service';
+import {GraphModule} from '@swimlane/ngx-graph';
+import {Node} from '@models/Node';
+import {Edge} from '@models/Edge';
+import {GraphService} from '@core/services/graph.service';
 import {curveLinear} from 'd3-shape';
-import {NgIf} from '@angular/common';
+import { GraphEditorComponent } from '../components/graph-editor/graph-editor.component';
 
 /**
  * Component responsible for rendering and managing the graph board.
@@ -13,7 +15,7 @@ import {NgIf} from '@angular/common';
   templateUrl: './board-page.component.html',
   styleUrls: ['./board-page.component.scss'],
   standalone: true,
-  imports: [NgIf, GraphModule],
+  imports: [GraphModule, GraphEditorComponent],
 })
 export class BoardPageComponent implements OnInit {
   /** Graph nodes */
@@ -68,7 +70,7 @@ export class BoardPageComponent implements OnInit {
   filterValidLinks(): void {
     const nodeIds = new Set(this.nodes.map((n) => n.id));
     this.links = this.links.filter(
-      (link) => nodeIds.has(link.source) && nodeIds.has(link.target)
+      (link) => nodeIds.has(link.sourceId) && nodeIds.has(link.targetId)
     );
   }
 
